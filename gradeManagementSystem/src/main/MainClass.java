@@ -19,11 +19,14 @@ public class MainClass {
 	{
 		Scanner scan = new Scanner(System.in);
 		String str = null;
+		String id = null;
+		String pwd = null;
 		int num = 0;
 		Boolean loopChk = true;
 		Boolean chk;
 		
 		ExamList examlist = new ExamList();
+		UserClass user = new UserClass();
 		
 		System.out.println("┌──────────────────────────────┐");
 		System.out.println("│       [성적 관리 시스템]         │");
@@ -40,10 +43,17 @@ public class MainClass {
 			
 			if(str.charAt(0) == '1')	// 로그인 ID/PWD 입력
 			{
-				break;
+				System.out.print("ID :");
+				id = scan.nextLine();
+				System.out.print("Password :");
+				pwd = scan.nextLine();
+				if(user.login(id, pwd) == true)
+				{
+					break;
+				}
 			}else if(str.charAt(0) == '2')	// 회원 가입
 			{
-				
+				user.join();
 			}else if(str.charAt(0) == '3')	// 끝내기
 			{
 				scan.close();

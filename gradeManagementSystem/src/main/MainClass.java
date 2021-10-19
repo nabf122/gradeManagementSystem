@@ -12,10 +12,14 @@ public class MainClass {
 	 * 6. 계정 생성
 	 */
 	
+	/**
+	 * @param args
+	 */
 	public static void main(String[] args)
 	{
 		Scanner scan = new Scanner(System.in);
 		String str = null;
+		int num = 0;
 		Boolean loopChk = true;
 		Boolean chk;
 		
@@ -66,10 +70,10 @@ public class MainClass {
 				examlist.addData();
 			}else if(str.charAt(0) == '2')	// 출력하기
 			{
-				System.out.println("출력할 이름을 입력하세요.");
+				System.out.println("출력할 학번을 입력하세요.");
 				System.out.print(":");
-				str = scan.nextLine();
-				chk = examlist.selectData(str);
+				num = scan.nextInt();
+				chk = examlist.selectData(num);
 				if(chk == true)	{	
 				}else
 					System.out.println("SYSTEM : 입력한 사용자가 없습니다.");
@@ -80,17 +84,20 @@ public class MainClass {
 			}
 			else if(str.charAt(0) == '4')	// 수정하기
 			{
-				System.out.println("수정할 이름을 입력하세요.");
+				System.out.println("수정할 학번을 입력하세요.");
 				System.out.print(":");
-				str = scan.nextLine();
-				examlist.updateData(str);
+				num = scan.nextInt();
+				chk = examlist.updateData(num);
+				if(chk == true)	{	
+				}else
+					System.out.println("SYSTEM : 입력한 사용자가 없습니다.");
 					
 			}else if(str.charAt(0) == '5')	// 삭제하기
 			{
-				System.out.println("삭제할 이름을 입력하세요.");
+				System.out.println("삭제할 학번을 입력하세요.");
 				System.out.print(":");
-				str = scan.nextLine();
-				chk = examlist.deleteData(str);
+				num = scan.nextInt();
+				chk = examlist.deleteData(num);
 				if(chk == true)
 				{
 					System.out.println("SYSTEM : 삭제되었습니다.");

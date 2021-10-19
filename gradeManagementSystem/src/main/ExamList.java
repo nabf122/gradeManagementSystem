@@ -4,13 +4,15 @@ import java.util.ArrayList;
 import java.util.Scanner;
 
 class ExamItem {
+	public int s_num; // 학번 
 	public String name;
 	public int kor;
 	public int eng;
 	public int mat;
 	public int sci;
 	
-	public ExamItem(String name, int kor, int eng, int mat, int sci) {
+	public ExamItem(int s_num, String name, int kor, int eng, int mat, int sci) {
+		this.s_num = s_num;
 		this.name = name;
 		this.kor = kor;
 		this.eng = eng;
@@ -30,6 +32,7 @@ public class ExamList {
 	 * sum : 학점 총 합
 	 * arg : 평균
 	 */
+	private int s_num;
 	private String name;
 	private int kor;
 	private int eng;
@@ -55,6 +58,15 @@ public class ExamList {
 		arraylist = new ArrayList<ExamItem>(MAX_SIZE);
 		for (int i = 0; i < MAX_SIZE; i++)
 			arraylist.add(null);
+	}
+	
+
+	public int getS_num() {
+		return s_num;
+	}
+
+	public void setS_num(int s_num) {
+		this.s_num = s_num;
 	}
 	
 	public String getName() {
@@ -103,22 +115,37 @@ public class ExamList {
 		System.out.println("│          성 적 입 력           │ ");
 		System.out.println("└──────────────────────────────┘");
 		System.out.println();
+		System.out.print("학번 : ");
+		s_num = scan.nextInt();
 		System.out.print("이름 : ");
 		name = scan.nextLine();
-		System.out.print("국어 : ");
-		kor = scan.nextInt();
-		System.out.print("영어 : ");
-		eng = scan.nextInt();
-		System.out.print("수학 : ");
-		mat = scan.nextInt();
-		System.out.print("과학 : ");
-		sci = scan.nextInt();
+
+		while(true)
+		{
+			System.out.print("국어 : ");
+			kor = scan.nextInt();
+			System.out.print("영어 : ");
+			eng = scan.nextInt();
+			System.out.print("수학 : ");
+			mat = scan.nextInt();
+			System.out.print("과학 : ");
+			sci = scan.nextInt();
+			
+			if(kor >= 0 && kor <= 100 &&
+					eng >= 0 && eng <= 100 &&
+					mat >= 0 && mat <= 100 &&
+					sci >= 0 && sci <= 100)
+			{
+				break;
+			}else
+				System.out.println("0 ~ 100의 숫자만 입력하세요.");
+		}
 		
 		for(int i = 0 ; i < MAX_SIZE; ++i)
 		{
 			if(arraylist.get(i) == null)
 			{
-				arraylist.set(i, new ExamItem(name,kor,eng,mat,sci));
+				arraylist.set(i, new ExamItem(s_num,name,kor,eng,mat,sci));
 				users ++;
 				System.out.println("SYSTEM : 입력되었습니다.");
 				return true;
@@ -131,7 +158,7 @@ public class ExamList {
 	/*
 	 * 2. 성적 출력하기
 	 */
-	public Boolean selectData(String name)
+	public Boolean selectData(int s_num)
 	{
 		System.out.println("┌──────────────────────────────┐");
 		System.out.println("│          성 적 출 력           │ ");
@@ -139,11 +166,12 @@ public class ExamList {
 		
 		for(int i = 0 ; i < MAX_SIZE; ++i)
 		{
-			if(arraylist.get(i).name.equals(name))	// 동일한 이름이 맞다면
+			if(arraylist.get(i).s_num == s_num && arraylist.get(i) != null)	// 동일한 이름이 맞다면
 			{
 				sum = sum(arraylist.get(i).kor, arraylist.get(i).eng
 						, arraylist.get(i).mat, arraylist.get(i).sci);
 				System.out.println();
+				System.out.print("학번 : " + arraylist.get(i).s_num+ "\n");
 				System.out.print("이름 : " + arraylist.get(i).name+ "\n");
 				System.out.print("국어 : " + arraylist.get(i).kor + "\n");
 				System.out.print("영어 : " + arraylist.get(i).eng + "\n");
@@ -168,12 +196,13 @@ public class ExamList {
 		
 		for(int i = 0 ; i < MAX_SIZE; ++i)
 		{
-			if(arraylist.get(i).name != null)
+			if(arraylist.get(i) != null)
 			{
 				sum = sum(arraylist.get(i).kor, arraylist.get(i).eng
 						, arraylist.get(i).mat, arraylist.get(i).sci);
-				System.out.println("저장된 수 : " + users);
+				System.out.println("저장된 학생 수 : " + users);
 				System.out.println();
+				System.out.print("학번 : " + arraylist.get(i).s_num+ "\n");
 				System.out.print("이름 : " + arraylist.get(i).name+ "\n");
 				System.out.print("국어 : " + arraylist.get(i).kor + "\n");
 				System.out.print("영어 : " + arraylist.get(i).eng + "\n");
@@ -182,10 +211,6 @@ public class ExamList {
 				System.out.print("총합 : " + sum + "\n");
 				System.out.print("평균 : " + (double)sum/4 + "\n");
 				System.out.println("──────────────────────────────");
-			}else
-			{
-				System.out.println("null");
-				System.out.println("──────────────────────────────");
 			}
 		}
 	}
@@ -193,35 +218,49 @@ public class ExamList {
 	/*
 	 * 4. 성적 수정하기
 	 */
-	public void updateData(String name)
+	public boolean updateData(int s_num)
 	{
 		System.out.println("┌──────────────────────────────┐");
 		System.out.println("│          성 적 수 정           │ ");
 		System.out.println("└──────────────────────────────┘");
 		for(int i = 0 ; i < MAX_SIZE; ++i)
 		{
-			if(arraylist.get(i).name != null)
+			if(arraylist.get(i).s_num == s_num && arraylist.get(i) != null)
 			{
-				System.out.print("국어 : ");
-				kor = scan.nextInt();
-				System.out.print("영어 : ");
-				eng = scan.nextInt();
-				System.out.print("수학 : ");
-				mat = scan.nextInt();
-				System.out.print("과학 : ");
-				sci = scan.nextInt();
+				while(true)
+				{
+					System.out.print("국어 : ");
+					kor = scan.nextInt();
+					System.out.print("영어 : ");
+					eng = scan.nextInt();
+					System.out.print("수학 : ");
+					mat = scan.nextInt();
+					System.out.print("과학 : ");
+					sci = scan.nextInt();
+					
+					if(kor >= 0 && kor <= 100 &&
+							eng >= 0 && eng <= 100 &&
+							mat >= 0 && mat <= 100 &&
+							sci >= 0 && sci <= 100)
+					{
+						break;
+					}else
+						System.out.println("0 ~ 100의 숫자만 입력하세요.");
+				}
 				
-				arraylist.set(i, new ExamItem(name,kor,eng,mat,sci));
+				arraylist.set(i, new ExamItem(s_num,arraylist.get(i).name,kor,eng,mat,sci));
 				System.out.println("SYSTEM : 수정되었습니다.");
-			}	
+				
+				return true;
+			}
 		}
-		System.out.println("SYSTEM : 입력한 사용자가 없습니다.");
+		return false;
 	}
 	
 	/*
 	 * 5. 성적 삭제하기
 	 */
-	public Boolean deleteData(String name)
+	public Boolean deleteData(int s_num)
 	{
 		System.out.println("┌──────────────────────────────┐");
 		System.out.println("│          성 적 삭 제           │ ");
@@ -229,7 +268,7 @@ public class ExamList {
 		
 		for(int i = 0 ; i < MAX_SIZE; ++i)
 		{
-			if(arraylist.get(i).equals(name))	// 동일한 이름이 맞다면
+			if(arraylist.get(i).s_num == s_num && arraylist.get(i).s_num == s_num && arraylist.get(i) != null)	// 동일한 이름이 맞다면
 			{
 				arraylist.set(i, null);
 				users --;
@@ -250,5 +289,8 @@ public class ExamList {
 		return a+b+c+d;
 	}
 	
+	/*
+	 * 학번
+	 */
 	
 }

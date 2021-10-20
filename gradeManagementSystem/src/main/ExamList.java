@@ -3,7 +3,7 @@ package main;
 import java.util.ArrayList;
 import java.util.Scanner;
 
-class ExamItem {
+class ExamTable {
 	public int s_num; // 학번 
 	public String name;
 	public int kor;
@@ -11,7 +11,7 @@ class ExamItem {
 	public int mat;
 	public int sci;
 	
-	public ExamItem(int s_num, String name, int kor, int eng, int mat, int sci) {
+	public ExamTable(int s_num, String name, int kor, int eng, int mat, int sci) {
 		this.s_num = s_num;
 		this.name = name;
 		this.kor = kor;
@@ -43,7 +43,7 @@ public class ExamList {
 	
 	Scanner scan = new Scanner(System.in);
 	
-	private ArrayList<ExamItem> arraylist;
+	private ArrayList<ExamTable> arraylist;
 	
 	/*
 	 * 입력 가능한 최대 수 제한
@@ -55,7 +55,7 @@ public class ExamList {
 	 */
 	public ExamList()
 	{
-		arraylist = new ArrayList<ExamItem>(MAX_SIZE);
+		arraylist = new ArrayList<ExamTable>(MAX_SIZE);
 		for (int i = 0; i < MAX_SIZE; i++)
 			arraylist.add(null);
 	}
@@ -145,7 +145,7 @@ public class ExamList {
 		{
 			if(arraylist.get(i) == null)
 			{
-				arraylist.set(i, new ExamItem(s_num,name,kor,eng,mat,sci));
+				arraylist.set(i, new ExamTable(s_num,name,kor,eng,mat,sci));
 				users ++;
 				System.out.println("SYSTEM : 입력되었습니다.");
 				return true;
@@ -248,7 +248,7 @@ public class ExamList {
 						System.out.println("0 ~ 100의 숫자만 입력하세요.");
 				}
 				
-				arraylist.set(i, new ExamItem(s_num,arraylist.get(i).name,kor,eng,mat,sci));
+				arraylist.set(i, new ExamTable(s_num,arraylist.get(i).name,kor,eng,mat,sci));
 				System.out.println("SYSTEM : 수정되었습니다.");
 				
 				return true;

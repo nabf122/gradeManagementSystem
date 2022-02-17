@@ -1,6 +1,8 @@
-package main;
+package com.main;
 
 import java.util.Scanner;
+
+import com.main.dao.DBConn;
 
 public class MainClass {
 	/*
@@ -17,6 +19,10 @@ public class MainClass {
 	 */
 	public static void main(String[] args)
 	{
+		// DB 연동
+		DBConn dbconn = new DBConn();
+		dbconn.connect();
+		
 		Scanner scan = new Scanner(System.in);
 		String str = null;
 		String id = null;
@@ -63,11 +69,7 @@ public class MainClass {
 			}else
 				System.out.println("SYSTEM : 잘못된 입력입니다. 다시 입력해주세요.");
 		}
-		
-		System.out.println("┌──────────────────────────────┐");
-		System.out.println("│       [성적 관리 시스템]         │");
-		System.out.println("└──────────────────────────────┘");
-		
+	
 		while(loopChk)
 		{
 			System.out.println("1. 입력하기\n2. 출력하기\n3. 전체출력하기\n"

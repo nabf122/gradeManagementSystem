@@ -4,7 +4,7 @@ import java.util.Scanner;
 
 import com.main.dao.DBConn;
 
-public class MainClass {
+public class Main {
 	/*
 	 * 1. 성적 입력하기
 	 * 2. 성적 수정하기
@@ -19,10 +19,6 @@ public class MainClass {
 	 */
 	public static void main(String[] args)
 	{
-		// DB 연동
-		DBConn dbconn = new DBConn();
-		dbconn.connect();
-		
 		Scanner scan = new Scanner(System.in);
 		String str = null;
 		String id = null;
@@ -32,7 +28,7 @@ public class MainClass {
 		Boolean chk;
 		
 		ExamList examlist = new ExamList();
-		UserClass user = new UserClass();
+		Manager user = new Manager();
 		
 		System.out.println("┌──────────────────────────────┐");
 		System.out.println("│       [성적 관리 시스템]         │");

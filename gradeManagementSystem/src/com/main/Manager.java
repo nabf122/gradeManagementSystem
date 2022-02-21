@@ -2,6 +2,7 @@ package com.main;
 
 import java.sql.Connection;
 import java.sql.DriverManager;
+import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Statement;
@@ -19,6 +20,7 @@ public class Manager {
 	private String email;
 	private String phone;
 	private String use_flg;
+	public String yorn;
 	
 	public String getPassword() {
 		return password;
@@ -89,25 +91,39 @@ public class Manager {
 	public void join() {
 		boolean chk = true;
 		String sql;
+		
+		// id 생성
 		while(chk) {
-			System.out.print("아이디 입력 :");
+			System.out.print("신규 아이디 입력 :");
 			this.id = scan.nextLine();
-			if(this.id.equals("") && this.id != null) {
-				System.out.println("필수 입력 값입니다!");
+			if(this.id.equals("") || this.id == null || this.id.equals(" ")) {
+				System.out.println("필수 입력 값입니다. 올바른 값을 입력해주세요.");
 			} else {
-				sql = String.format("SELECT COUNT(*) FROM insa.manager where id ='" + this.id + "'");
+				sql = String.format("SELECT COUNT(*) FROM insa.manager where id ='" + this.id + "';");
 				
+				// mysql db 연결하기
 				Connection conn;
 				try {
 					conn = DriverManager.getConnection(DBConn.url, DBConn.user, DBConn.password);
 					
 					Statement stmt = conn.createStatement();
+					
+					// db에서 중복된 값인지 조회해서 체크하기
 					ResultSet rs = stmt.executeQuery(sql);
+					
+					if(rs.next()) {
+						// int a = rs.getInt(1);
+					}
 					
 					if(rs.getInt(1) >= 1) {
 						System.out.println("중복된 아이디입니다.");
 					}else {
 						System.out.println("사용할 수 있는 아이디입니다.");
+						System.out.print("사용하시겠습니까?(y/n) : ");
+						this.yorn = scan.nextLine();
+						if(yorn.equals("y")) {
+							chk = false;
+						}else {	}
 					}
 				} catch (SQLException e) {
 					// TODO Auto-generated catch block
@@ -116,28 +132,101 @@ public class Manager {
 			}
 		}
 		
-		System.out.print("ID를 입력해주세요 :");
-		this.id = scan.nextLine();
+		// flag 초기화
+		yorn = null;
+		chk = true;
 		
-		
-		System.out.print("패스워드를 입력해주세요 :");
-		this.password = scan.nextLine();
-		while(true)
+		// password 생성
+		while(chk)
 		{
-			System.out.print("패스워드를 다시 입력해주세요 :");
-			if(!this.password.equals(scan.nextLine()))
-			{
-				System.out.println("패스워드가 일치하지 않습니다.");
-			}else
-				break;
+			System.out.print("패스워드를 입력해주세요 :");
+			this.password = scan.nextLine();
+			if(this.password.equals("") || this.password == null || this.password.equals(" ")) {
+				System.out.println("필수 입력 값입니다. 올바른 값을 입력해주세요.");
+			} else {
+				System.out.print("패스워드를 다시 한번 입력해주세요 :");
+				if(!this.password.equals(scan.nextLine()))
+				{
+					System.out.println("패스워드가 일치하지 않습니다.");
+				}else { 
+					chk = false;
+				}
+			}
 		}
 		
-		System.out.print("이름을 입력해주세요 :");
-		this.name = scan.nextLine();
-		System.out.print("이름을 입력해주세요 :");
-		this.name = scan.nextLine();
+		// flag 초기화
+		yorn = null;
+		chk = true;
+				
+		// name 생성
+		while(chk)
+		{
+			System.out.print("이름를 입력해주세요 :");
+			this.name = scan.nextLine();
+			if(this.name.equals("") || this.password == null || this.password.equals(" ")) {
+				System.out.println("필수 입력 값입니다. 올바른 값을 입력해주세요.");
+			} else {
+				chk = false;
+			}	
+		}
+
+		// flag 초기화
+		yorn = null;
+		chk = true;
+						
+		// email 생성
+		while(chk)
+		{
+			System.out.print("이메일을 입력해주세요 :");
+			this.email = scan.nextLine();
+			chk = false;	
+		}		
 		
-		System.out.println("회원 가입에 성공하셨습니다."
-				+ "\n로그인해주세요.");
+		// flag 초기화
+		yorn = null;
+		chk = true;
+						
+		// phone 생성
+		while(chk)
+		{
+			System.out.print("전화번호를 입력해주세요 :");
+			this.phone = scan.nextLine();
+			chk = false;
+		}	
+		
+		// 최종 id 생성 체크
+		System.out.print("입력하신 정보로 회원 가입하시겠습니까?(y/n) : ");
+		this.yorn = scan.nextLine();
+		if(yorn.equals("y")) {
+			
+			// sql 쿼리
+			sql = String.format("insert into insa.manager (id, name, password, email, phone) values (?,?,?,?,?)2");
+			
+			// mysql db 연결하기
+			Connection conn;
+			try {
+				conn = DriverManager.getConnection(DBConn.url, DBConn.user, DBConn.password);
+				
+				// 값 받아오기
+				PreparedStatement pstmt = conn.prepareStatement(sql);
+				pstmt.setString(1, this.id); 
+				pstmt.setString(2, this.name); 
+				pstmt.setString(3, this.password); 
+				pstmt.setString(4, this.email); 
+				pstmt.setString(5, this.phone);
+				
+				// 테이블에 insert 수행하기
+				int r = pstmt.executeUpdate(sql);
+				
+				System.out.println("변경된 row : " + r);
+				System.out.println("회원 가입에 성공하셨습니다.\n로그인해주세요.");
+				
+			} catch (SQLException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			}
+		}else {	
+			return ;
+		}
 	}
 }

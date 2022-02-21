@@ -33,7 +33,7 @@ public class Main {
 		System.out.println("┌──────────────────────────────┐");
 		System.out.println("│       [성적 관리 시스템]         │");
 		System.out.println("└──────────────────────────────┘");
-		
+	
 		/*
 		 * 로그인 또는 회원 가입
 		 */

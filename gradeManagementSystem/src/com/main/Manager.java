@@ -20,7 +20,9 @@ public class Manager {
 	private String email;
 	private String phone;
 	private String use_flg;
+	
 	public String yorn;
+	public String sql;
 	
 	public String getPassword() {
 		return password;
@@ -62,15 +64,39 @@ public class Manager {
 	/*
 	 * 로그인 
 	 */
-	public boolean login(String user_id, String passowrd) {
-		if(this.id != null && this.password != null)
-		{
-			if(this.id.equals(user_id))
+	public boolean login(String id, String passowrd) {
+		sql = String.format("SELECT id, password, name, email, phone FROM insa.manager where id ='" + id + "'");
+		
+		// mysql db 연결하기
+		Connection conn;
+		try {
+			conn = DriverManager.getConnection(DBConn.url, DBConn.user, DBConn.password);
+			
+			Statement stmt = conn.createStatement();
+			
+			// id로 된 this.id, this.password 가져오기
+			ResultSet rs = stmt.executeQuery(sql);
+			
+			if(rs.next()) {
+				this.id = rs.getString(1);
+				this.password = rs.getString(2);
+				this.name = rs.getString(3);
+				this.email = rs.getString(4);
+				this.phone = rs.getString(5);
+			}
+			
+			if(this.id != null && this.password != null)
 			{
-				if(this.password.equals(passowrd))
+				if(this.id.equals(id))
 				{
-					System.out.println("로그인에 성공하셨습니다.");
-					return true;
+					if(this.password.equals(passowrd))
+					{
+						System.out.println("로그인에 성공하셨습니다.");
+						return true;
+					}else
+						System.out.println("ID 또는 Password가 틀렸습니다."
+								+ "\n다시 시도해주세요.");
+						return false;
 				}else
 					System.out.println("ID 또는 Password가 틀렸습니다."
 							+ "\n다시 시도해주세요.");
@@ -78,10 +104,13 @@ public class Manager {
 			}else
 				System.out.println("ID 또는 Password가 틀렸습니다."
 						+ "\n다시 시도해주세요.");
-				return false;
-		}else
-			System.out.println("ID가 존재하지 않습니다.");
-		
+			
+			return false;
+			
+		} catch (SQLException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
 		return false;
 	}
 	
@@ -90,7 +119,7 @@ public class Manager {
 	 */
 	public void join() {
 		boolean chk = true;
-		String sql;
+		// String sql;
 		
 		// id 생성
 		while(chk) {
@@ -99,7 +128,7 @@ public class Manager {
 			if(this.id.equals("") || this.id == null || this.id.equals(" ")) {
 				System.out.println("필수 입력 값입니다. 올바른 값을 입력해주세요.");
 			} else {
-				sql = String.format("SELECT COUNT(*) FROM insa.manager where id ='" + this.id + "';");
+				sql = String.format("SELECT COUNT(*) FROM insa.manager where id ='" + this.id + "'");
 				
 				// mysql db 연결하기
 				Connection conn;
@@ -195,12 +224,13 @@ public class Manager {
 		}	
 		
 		// 최종 id 생성 체크
+		System.out.println(toString());
 		System.out.print("입력하신 정보로 회원 가입하시겠습니까?(y/n) : ");
 		this.yorn = scan.nextLine();
 		if(yorn.equals("y")) {
 			
 			// sql 쿼리
-			sql = String.format("insert into insa.manager (id, name, password, email, phone) values (?,?,?,?,?)2");
+			sql = "insert into insa.manager (id, name, password, email, phone) values (?, ?, ?, ?, ?)";
 			
 			// mysql db 연결하기
 			Connection conn;
@@ -216,10 +246,16 @@ public class Manager {
 				pstmt.setString(5, this.phone);
 				
 				// 테이블에 insert 수행하기
-				int r = pstmt.executeUpdate(sql);
+				int r = pstmt.executeUpdate();
+				// System.out.println("변경된 row : " + r);
 				
-				System.out.println("변경된 row : " + r);
-				System.out.println("회원 가입에 성공하셨습니다.\n로그인해주세요.");
+				if (r == 0) {
+					System.out.println("데이터값에 이상이 있습니다.");
+				} else {
+					System.out.println("회원 가입에 성공하셨습니다.\n로그인해주세요.");
+				}
+				
+				
 				
 			} catch (SQLException e) {
 				// TODO Auto-generated catch block
@@ -228,5 +264,11 @@ public class Manager {
 		}else {	
 			return ;
 		}
+	}
+	
+	@Override
+	public String toString() {
+		return "join info\n[id : " + id + ", password : " + password + ", name : " + name + ", email : " + email + ", phone : "
+				+ phone + "]";
 	}
 }

@@ -28,7 +28,7 @@ public class Main {
 		Boolean chk;
 		
 		ExamList examlist = new ExamList();
-		Manager user = new Manager();
+		Manager mUser = new Manager();
 		
 		System.out.println("┌──────────────────────────────┐");
 		System.out.println("│       [성적 관리 시스템]         │");
@@ -49,13 +49,15 @@ public class Main {
 				id = scan.nextLine();
 				System.out.print("Password :");
 				pwd = scan.nextLine();
-				if(user.login(id, pwd) == true)
+				if(mUser.login(id, pwd) == true)
 				{
+					System.out.println("Welcome "+ mUser.getName() + "\n"
+							+ "login id : "+ mUser.getId() + "\n");
 					break;
 				}
 			}else if(str.charAt(0) == '2')	// 회원 가입
 			{
-				user.join();
+				mUser.join();
 			}else if(str.charAt(0) == '3')	// 끝내기
 			{
 				scan.close();

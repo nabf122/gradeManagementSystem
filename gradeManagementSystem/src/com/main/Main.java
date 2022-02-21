@@ -2,16 +2,15 @@ package com.main;
 
 import java.util.Scanner;
 
-import com.main.dao.DBConn;
-
 public class Main {
 	/*
 	 * 1. 성적 입력하기
-	 * 2. 성적 수정하기
-	 * 3. 성적 조회하기
+	 * 2. 성적 조회하기
+	 * 3. 성적 수정하기
 	 * 4. 성적 삭제하기
-	 * 5. 로그인
-	 * 6. 계정 생성
+	 * 5. 학생 관리
+	 * 6. 학과 관리
+	 * 7. 끝내기
 	 */
 	
 	/**
@@ -24,11 +23,11 @@ public class Main {
 		String m_id = null;
 		String user_id = null;
 		String password = null;
-		int num = 0;
-		Boolean loopChk = true;
-		Boolean chk;
+		boolean loopChk = true;
+		boolean chk;
 		
-		ExamList_new examlist = new ExamList_new();
+		ExamList examlist = new ExamList();
+		UserList userlist = new UserList();
 		Manager mUser = new Manager();
 		
 		System.out.println("┌──────────────────────────────┐");
@@ -132,7 +131,7 @@ public class Main {
 			// 학생 관리하기
 			else if(str.equals("5"))
 			{
-				
+				userlist.UserManagementSystem();
 			}
 			// 학과 관리하기
 			else if(str.equals("6"))

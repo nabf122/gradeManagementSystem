@@ -65,10 +65,11 @@ public class Manager {
 	 * 로그인 
 	 */
 	public boolean login(String id, String passowrd) {
-		sql = String.format("SELECT id, password, name, email, phone FROM insa.manager where id ='" + id + "'");
-		
 		// mysql db 연결하기
 		Connection conn;
+		
+		sql = String.format("SELECT id, AES_DECRYPT(unhex(password), 'abc'), name, email, phone FROM insa.manager where id ='" + id + "'");
+				
 		try {
 			conn = DriverManager.getConnection(DBConn.url, DBConn.user, DBConn.password);
 			
@@ -128,10 +129,11 @@ public class Manager {
 			if(this.id.equals("") || this.id == null || this.id.equals(" ")) {
 				System.out.println("필수 입력 값입니다. 올바른 값을 입력해주세요.");
 			} else {
-				sql = String.format("SELECT COUNT(*) FROM insa.manager where id ='" + this.id + "'");
-				
 				// mysql db 연결하기
 				Connection conn;
+				
+				sql = String.format("SELECT COUNT(*) FROM insa.manager where id ='" + this.id + "'");
+								
 				try {
 					conn = DriverManager.getConnection(DBConn.url, DBConn.user, DBConn.password);
 					
@@ -229,11 +231,12 @@ public class Manager {
 		this.yorn = scan.nextLine();
 		if(yorn.equals("y")) {
 			
-			// sql 쿼리
-			sql = "insert into insa.manager (id, name, password, email, phone) values (?, ?, ?, ?, ?)";
-			
 			// mysql db 연결하기
 			Connection conn;
+			
+			// sql 쿼리
+			sql = "insert into insa.manager (id, name, password, email, phone) values (?, ?, hex(aes_encrypt( ? ,'abc')), ?, ?)";
+						
 			try {
 				conn = DriverManager.getConnection(DBConn.url, DBConn.user, DBConn.password);
 				

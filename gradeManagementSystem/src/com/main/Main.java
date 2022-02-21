@@ -21,13 +21,14 @@ public class Main {
 	{
 		Scanner scan = new Scanner(System.in);
 		String str = null;
-		String id = null;
-		String pwd = null;
+		String m_id = null;
+		String user_id = null;
+		String password = null;
 		int num = 0;
 		Boolean loopChk = true;
 		Boolean chk;
 		
-		ExamList examlist = new ExamList();
+		ExamList_new examlist = new ExamList_new();
 		Manager mUser = new Manager();
 		
 		System.out.println("┌──────────────────────────────┐");
@@ -46,10 +47,10 @@ public class Main {
 			if(str.charAt(0) == '1')	// 로그인 ID/PWD 입력
 			{
 				System.out.print("ID :");
-				id = scan.nextLine();
+				m_id = scan.nextLine();
 				System.out.print("Password :");
-				pwd = scan.nextLine();
-				if(mUser.login(id, pwd) == true)
+				password = scan.nextLine();
+				if(mUser.login(m_id, password) == true)
 				{
 					System.out.println("Welcome "+ mUser.getName() + "\n"
 							+ "login id : "+ mUser.getId() + "\n");
@@ -70,51 +71,76 @@ public class Main {
 	
 		while(loopChk)
 		{
-			System.out.println("1. 입력하기\n2. 출력하기\n3. 전체출력하기\n"
-					+ "4. 수정하기\n5. 삭제하기\n6. 끝내기");
+			System.out.println("1. 입력하기\n2. 조회하기\n3. 수정하기\n"
+					+ "4. 삭제하기\n5. 학생 관리\n6. 학과 관리\n7. 끝내기");
 			System.out.print(":");
+			
 			str = scan.nextLine();
 			
-			if(str.charAt(0) == '1')	// 입력하기
+			// 입력하기
+			if(str.equals("1"))	
 			{
-				examlist.addData();
-			}else if(str.charAt(0) == '2')	// 출력하기
-			{
-				System.out.println("출력할 학번을 입력하세요.");
+				System.out.println("┌──────────────────────────────┐");
+				System.out.println("│          성 적 입 력           │ ");
+				System.out.println("└──────────────────────────────┘");
+				System.out.println("입력할 학번을 입력하세요.");
 				System.out.print(":");
-				num = scan.nextInt();
-				chk = examlist.selectData(num);
-				if(chk == true)	{	
-				}else
-					System.out.println("SYSTEM : 입력한 사용자가 없습니다.");
+				user_id = scan.nextLine();
 				
-			}else if(str.charAt(0) == '3')	// 전체 출력하기
-			{
-				examlist.selectAllData();
+				chk = examlist.addData(user_id);
+				
+				if(chk == true)	{ }
 			}
-			else if(str.charAt(0) == '4')	// 수정하기
+			// 조회하기
+			else if(str.equals("2"))
+			{
+				System.out.println("┌──────────────────────────────┐");
+				System.out.println("│          성 적 조 회           │ ");
+				System.out.println("└──────────────────────────────┘");
+				System.out.println("조회할 학번을 입력하세요.");
+				System.out.print(":");
+				user_id = scan.nextLine();
+				
+				chk = examlist.selectData(user_id);
+				
+				if(chk == true)	{ }
+			}
+			/* // 수정하기
+			else if(str.equals("3"))
 			{
 				System.out.println("수정할 학번을 입력하세요.");
 				System.out.print(":");
 				num = scan.nextInt();
-				chk = examlist.updateData(num);
+				 chk = examlist.updateData(num);
 				if(chk == true)	{	
 				}else
-					System.out.println("SYSTEM : 입력한 사용자가 없습니다.");
-					
-			}else if(str.charAt(0) == '5')	// 삭제하기
+					System.out.println("SYSTEM : 입력한 사용자가 없습니다.");		
+			} */
+			// 삭제하기
+			else if(str.equals("4"))
 			{
+				System.out.println("┌──────────────────────────────┐");
+				System.out.println("│          성 적 삭 제           │ ");
+				System.out.println("└──────────────────────────────┘");
 				System.out.println("삭제할 학번을 입력하세요.");
 				System.out.print(":");
-				num = scan.nextInt();
-				chk = examlist.deleteData(num);
-				if(chk == true)
-				{
-					System.out.println("SYSTEM : 삭제되었습니다.");
-				}else
-					System.out.println("SYSTEM : 입력한 사용자가 없습니다.");
 				
-			}else if(str.charAt(0) == '6')	// 끝내기
+				user_id = scan.nextLine();
+				chk = examlist.deleteData(user_id);
+				if(chk == true){ }
+			}
+			// 학생 관리하기
+			else if(str.equals("5"))
+			{
+				
+			}
+			// 학과 관리하기
+			else if(str.equals("6"))
+			{
+				
+			}
+			// 끝내기
+			else if(str.equals("7"))
 			{
 				scan.close();
 				System.out.println("SYSTEM : 종료됩니다.");

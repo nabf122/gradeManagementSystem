@@ -11,17 +11,6 @@ import java.util.Scanner;
 import com.main.dao.DBConn;
 
 public class ExamList {
-
-	/*
-	 * 성적 데이터 저장과 데이터 처리하는 클래스
-	 * kor : 국어
-	 * eng : 영어
-	 * mat : 수학
-	 * sci : 과학
-	 * sum : 학점 총 합
-	 * arg : 평균
-	 */
-	
 	private int user_no;
 	private String user_id;
 	private String user_name;
@@ -31,7 +20,6 @@ public class ExamList {
 	private int mat;
 	private int sci;
 	private int sum;
-	private int users;
 	
 	public String sql;
 	
@@ -86,12 +74,9 @@ public class ExamList {
 		this.sum = sum;
 	}
 	
-	/*
-	 * 1. 입력하기
-	 */
-	public Boolean addData(String user_id)
+	// 성적 입력
+	public void addData(String user_id)
 	{
-		
 		sql = String.format("SELECT no, id FROM insa.user_info where id ='" + user_id + "'");
 						
 		try {
@@ -100,29 +85,26 @@ public class ExamList {
 			stmt = conn.createStatement();
 			rs = stmt.executeQuery(sql);
 			
-			// 등록된 학번인지 체크하기
+			// 이미 등록된 학번인지 체크하기
 			if(rs.next()) {
 				this.user_no = rs.getInt(1);
 				if(user_id.equals(rs.getString(2)))
 				{
 					this.user_id = rs.getString(2);
 					
-					// 해당 학번으로 이미 등록된 성적이 있는지 확인하기
+					// 해당 학번으로 이미 등록된 성적이 있는지 확인하는 SQL
 					sql = "SELECT count(*) FROM insa.user_grades WHERE no in (SELECT no FROM insa.user_info WHERE id ='" + this.user_id + "')";
 					
 					stmt = conn.createStatement();
 					rs = stmt.executeQuery(sql);
-					
-					if(rs.next()) { }
+					rs.next();
 					
 					if(rs.getInt(1) >= 1) {
 						System.out.println("입력하신 학번으로 이미 등록된 성적이 있습니다.");
-						return false;
 					}
 				}else
 				{
 					System.out.println("등록되지 않은 학번입니다.");
-					return false;
 				}
 			}
 			
@@ -145,10 +127,9 @@ public class ExamList {
 					{
 						sql = "insert into insa.user_grades (user_no, kor, eng, mat, sci) values (?, ?, ?, ?, ?)";
 						
-						try {
-							
-							// 값 받아오기
+						try {	// 값 받아오기
 							pstmt = conn.prepareStatement(sql);
+							
 							pstmt.setInt(1, this.user_no); 
 							pstmt.setInt(2, this.kor); 
 							pstmt.setInt(3, this.eng); 
@@ -167,7 +148,6 @@ public class ExamList {
 							// TODO Auto-generated catch block
 							e.printStackTrace();
 						}
-						return true;
 					}else
 						System.out.println("0 ~ 100의 숫자만 입력하세요.");
 			}
@@ -175,16 +155,12 @@ public class ExamList {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
-		return false;
 	}
 	
 	
-	/*
-	 * 2. 조회하기
-	 */
-	public Boolean selectData(String user_id)
+	// 성적 조회
+	public void selectData(String user_id)
 	{
-		// sql 쿼리, 입력된 user 성적이 있는지 확인
 		sql = String.format("SELECT count(*) FROM insa.user_info ui, insa.user_grades ug WHERE ui.no = ug.user_no AND ui.id ='" + user_id + "'");
 								
 		try {
@@ -199,7 +175,6 @@ public class ExamList {
 			if(rs.getInt(1) <= 0)
 			{
 				System.out.println("등록되지 않은 학번이거나 등록된 성적이 없습니다.");
-				return false;
 			}else
 			{
 				sql = String.format("SELECT ui.id, ui.name, ug.kor, ug.eng, ug.mat, ug.sci FROM insa.user_info ui, insa.user_grades ug WHERE ui.no = ug.user_no AND ui.id ='" + user_id + "'");
@@ -219,18 +194,14 @@ public class ExamList {
 				sum = sum(this.kor, this.eng, this.mat, this.sci);
 				System.out.println();
 				System.out.println(toString());
-				return true;
 			}
 		} catch (SQLException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
-		return false;
 	}
 	
-	/*
-	 * 3. 수정하기
-	 */
+	// 성적 수정
 	/*
 	public boolean updateData(int s_num)
 	{
@@ -273,9 +244,9 @@ public class ExamList {
 	
 	*/
 	
-	public Boolean deleteData(String user_id)
+	// 성적 삭제
+	public void deleteData(String user_id)
 	{
-		// 입력되어 있는 성적 조회하기
 		sql = String.format("SELECT count(*) FROM insa.user_info ui, insa.user_grades ug WHERE ui.no = ug.user_no AND ui.id ='" + user_id + "'");
 										
 		try {
@@ -283,14 +254,12 @@ public class ExamList {
 							
 			stmt = conn.createStatement();	
 			rs = stmt.executeQuery(sql);
-							
-			// 등록된 학번인지 체크하기
-			if(rs.next()) { }
+
+			rs.next();
 					
 			if(rs.getInt(1) <= 0)
 			{
 				System.out.println("등록되지 않은 학번이거나 등록된 성적이 없습니다.");
-				return false;
 			}else
 			{
 				this.user_id = user_id;
@@ -300,22 +269,14 @@ public class ExamList {
 				pstmt = conn.prepareStatement(sql);
 				int r = pstmt.executeUpdate();
 				
+				System.out.println(this.user_id + "학번의 성적이 삭제되었습니다.");
 				System.out.println(r + "건의 데이터가 삭제되었습니다.");
 				
-				return true;
 			}
 		} catch (SQLException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
-		
-		System.out.println("삭제한 데이터가 없습니다.");
-		return false;
-	}
-
-	public int totalUsers()
-	{
-		return users;
 	}
 	
 	int sum(int a, int b, int c, int d)
@@ -325,7 +286,7 @@ public class ExamList {
 	
 	@Override
 	public String toString() {
-		return "ExamList [학번=" + this.user_id + ", 이름=" + this.user_name + ", 국어=" + this.kor + ", 영어=" + this.eng + ", 수학="
+		return "[학번=" + this.user_id + ", 이름=" + this.user_name + ", 국어=" + this.kor + ", 영어=" + this.eng + ", 수학="
 				+ this.mat + ", 과학=" + this.sci + ", 총합=" + this.sum + ", 평균=" + (double)this.sum/4 + "]\n";
 	}
 	

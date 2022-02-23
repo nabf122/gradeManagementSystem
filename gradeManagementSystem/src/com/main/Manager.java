@@ -60,13 +60,12 @@ public class Manager {
 	public void setId(String id) {
 		this.id = id;
 	}
+	
+	Connection conn;
 
-	/*
-	 * 로그인 
-	 */
+	// 관리자 계정 로그인
 	public boolean login(String id, String passowrd) {
 		// mysql db 연결하기
-		Connection conn;
 		
 		sql = String.format("SELECT id, AES_DECRYPT(unhex(password), 'abc'), name, email, phone FROM insa.manager where id ='" + id + "'");
 				
@@ -75,7 +74,7 @@ public class Manager {
 			
 			Statement stmt = conn.createStatement();
 			
-			// id로 된 this.id, this.password 가져오기
+			// 입력받은 ID인 계정 정보 가져오기
 			ResultSet rs = stmt.executeQuery(sql);
 			
 			if(rs.next()) {
@@ -115,36 +114,25 @@ public class Manager {
 		return false;
 	}
 	
-	/*
-	 * 회원가입 
-	 */
+	// 관리자 계정 ID 생성
 	public void join() {
 		boolean chk = true;
-		// String sql;
 		
-		// id 생성
 		while(chk) {
 			System.out.print("신규 아이디 입력 :");
 			this.id = scan.nextLine();
 			if(this.id.equals("") || this.id == null || this.id.equals(" ")) {
 				System.out.println("필수 입력 값입니다. 올바른 값을 입력해주세요.");
 			} else {
-				// mysql db 연결하기
-				Connection conn;
-				
 				sql = String.format("SELECT COUNT(*) FROM insa.manager where id ='" + this.id + "'");
 								
 				try {
 					conn = DriverManager.getConnection(DBConn.url, DBConn.user, DBConn.password);
 					
 					Statement stmt = conn.createStatement();
-					
-					// db에서 중복된 값인지 조회해서 체크하기
 					ResultSet rs = stmt.executeQuery(sql);
 					
-					if(rs.next()) {
-						// int a = rs.getInt(1);
-					}
+					rs.next();
 					
 					if(rs.getInt(1) >= 1) {
 						System.out.println("중복된 아이디입니다.");
@@ -154,7 +142,7 @@ public class Manager {
 						this.yorn = scan.nextLine();
 						if(yorn.equals("y")) {
 							chk = false;
-						}else {	}
+						}
 					}
 				} catch (SQLException e) {
 					// TODO Auto-generated catch block
@@ -163,11 +151,11 @@ public class Manager {
 			}
 		}
 		
-		// flag 초기화
-		yorn = null;
+		// 설정값 초기화
+		yorn = "";
 		chk = true;
 		
-		// password 생성
+		// 관리자 계정 password 생성
 		while(chk)
 		{
 			System.out.print("패스워드를 입력해주세요 :");
@@ -185,11 +173,10 @@ public class Manager {
 			}
 		}
 		
-		// flag 초기화
-		yorn = null;
+		// 설정값 초기화
 		chk = true;
 				
-		// name 생성
+		// 관리자 계정 name 생성
 		while(chk)
 		{
 			System.out.print("이름를 입력해주세요 :");
@@ -201,8 +188,7 @@ public class Manager {
 			}	
 		}
 
-		// flag 초기화
-		yorn = null;
+		// 설정값 초기화
 		chk = true;
 						
 		// email 생성
@@ -210,11 +196,10 @@ public class Manager {
 		{
 			System.out.print("이메일을 입력해주세요 :");
 			this.email = scan.nextLine();
-			chk = false;	
+			chk = false;
 		}		
 		
-		// flag 초기화
-		yorn = null;
+		// 설정값 초기화
 		chk = true;
 						
 		// phone 생성
@@ -225,16 +210,11 @@ public class Manager {
 			chk = false;
 		}	
 		
-		// 최종 id 생성 체크
+		// 입력 받은 값 체크
 		System.out.println(toString());
-		System.out.print("입력하신 정보로 회원 가입하시겠습니까?(y/n) : ");
+		System.out.print("입력하신 정보로 계정 생성하시겠습니까?(y/n) : ");
 		this.yorn = scan.nextLine();
 		if(yorn.equals("y")) {
-			
-			// mysql db 연결하기
-			Connection conn;
-			
-			// sql 쿼리
 			sql = "insert into insa.manager (id, name, password, email, phone) values (?, ?, hex(aes_encrypt( ? ,'abc')), ?, ?)";
 						
 			try {
@@ -250,22 +230,16 @@ public class Manager {
 				
 				// 테이블에 insert 수행하기
 				int r = pstmt.executeUpdate();
-				// System.out.println("변경된 row : " + r);
 				
 				if (r == 0) {
 					System.out.println("데이터값에 이상이 있습니다.");
 				} else {
 					System.out.println("회원 가입에 성공하셨습니다.\n로그인해주세요.");
 				}
-				
-				
-				
 			} catch (SQLException e) {
 				// TODO Auto-generated catch block
 				e.printStackTrace();
 			}
-		}else {	
-			return ;
 		}
 	}
 	

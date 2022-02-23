@@ -6,6 +6,7 @@ import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Statement;
+import java.util.ArrayList;
 import java.util.Scanner;
 
 import com.main.dao.DBConn;
@@ -75,7 +76,7 @@ public class UserList {
 	}
 	
 	public void UserManagementSystem() {
-		System.out.println(":");
+		System.out.print("학생 관리 입력:");
 		
 		String str = scan.nextLine();
 		
@@ -165,7 +166,7 @@ public class UserList {
 		try {
 			sql = "SELECT COUNT(*) FROM insa.user_dept WHERE dept_name ='"+ this.dept_name +"'";
 			
-			conn = DriverManager.getConnection(DBConn.url, DBConn.user, DBConn.password);
+			// conn = DriverManager.getConnection(DBConn.url, DBConn.user, DBConn.password);
 			
 			stmt = conn.createStatement();
 			rs = stmt.executeQuery(sql);
@@ -192,7 +193,7 @@ public class UserList {
 		try {
 			sql = "INSERT INTO insa.user_info (dept_no, id, name, email, phone, auth) values (?, ?, ?, ?, ?, 1)";
 			
-			conn = DriverManager.getConnection(DBConn.url, DBConn.user, DBConn.password);
+			// conn = DriverManager.getConnection(DBConn.url, DBConn.user, DBConn.password);
 			
 			pstmt = conn.prepareStatement(sql);
 			pstmt.setInt(1, num);
@@ -217,6 +218,76 @@ public class UserList {
 	// select
 	public void userSelect() {
 		
+		System.out.print("단일 학번 조회하기(1)\n전체 학번 조회하기(2)\n:");
+		String a = scan.nextLine();
+		
+		if(a.equals("1")) {
+			try {
+				System.out.print("학번 : ");
+				a = scan.nextLine();
+				
+				sql = "SELECT COUNT(*) FROM insa.user_info WHERE id ='"+ a +"'";
+				
+				conn = DriverManager.getConnection(DBConn.url, DBConn.user, DBConn.password);
+				
+				stmt = conn.createStatement();
+				rs = stmt.executeQuery(sql);
+				rs.next();
+				
+				if(rs.getInt(1) <= 0)
+				{
+					System.out.println("등록되지 않은 학번입니다.");
+					return ;
+				}else
+					this.user_id = a;
+			} catch (Exception e) {
+				// TODO: handle exception
+			}
+						
+			sql = "SELECT ui.id as ID, ud.dept_name AS DEPTNAME, ui.name AS NAME, ui.email AS EMAIL, ui.phone AS PHONE, IF(auth = '1', '1학년','2학년') AS AUTH"
+					+ " FROM insa.user_info ui, insa.user_dept ud WHERE ui.dept_no = ud.no AND ui.id = '"+ this.user_id +"'";
+		}else {
+			sql = "SELECT ui.id as ID, ud.dept_name AS DEPTNAME, ui.name AS NAME, ui.email AS EMAIL, ui.phone AS PHONE, IF(auth = '1', '1학년','2학년') AS AUTH"
+					+ " FROM insa.user_info ui, insa.user_dept ud WHERE ui.dept_no = ud.no";
+		}
+		
+		try {
+			conn = DriverManager.getConnection(DBConn.url, DBConn.user, DBConn.password);
+			
+			stmt = conn.createStatement();
+			rs = stmt.executeQuery(sql);
+									
+			//결과를 담을 ArrayList생성
+			ArrayList<UserBean> list = new ArrayList<UserBean>();
+			
+			while(rs.next())
+			{
+				UserBean bean = new UserBean(); 
+				bean.setId(rs.getString("ID")); 
+				bean.setDept_name(rs.getString("DEPTNAME")); 
+				bean.setName(rs.getString("NAME")); 
+				bean.setEmail(rs.getString("EMAIL"));
+				bean.setPhone(rs.getString("PHONE")); 
+				bean.setAuth(rs.getString("AUTH")); 
+				list.add(bean);
+			}
+			
+			if(list.size() > 0) {
+				System.out.println("학번 | 학과 | 이름 | 이메일 | 전화번호 | 학년");
+				
+				//결과물 출력
+				for(int i=0; i<list.size(); i++) 
+				{
+					System.out.println(list.get(i).getId() +" | "+list.get(i).getDept_name()+" | "+list.get(i).getName()
+							+" | "+list.get(i).getEmail()+" | "+list.get(i).getPhone()+" | "+list.get(i).getAuth());
+				}
+			}else
+				System.out.println("학생 정보가 없습니다.");
+			
+			
+		} catch (Exception e) {
+			// TODO: handle exception
+		}
 	}
 	
 	// update

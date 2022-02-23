@@ -21,6 +21,7 @@ public class ExamList {
 	 * sum : 학점 총 합
 	 * arg : 평균
 	 */
+	
 	private int user_no;
 	private String user_id;
 	private String user_name;

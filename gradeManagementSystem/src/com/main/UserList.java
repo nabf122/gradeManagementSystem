@@ -9,6 +9,8 @@ import java.sql.Statement;
 import java.util.ArrayList;
 import java.util.Scanner;
 
+import com.main.bean.DeptBean;
+import com.main.bean.UserBean;
 import com.main.dao.DBConn;
 
 public class UserList {
@@ -76,7 +78,7 @@ public class UserList {
 	}
 	
 	public void UserManagementSystem() {
-		System.out.print("학생 관리 입력:");
+		System.out.print("학생 추가(1)\n학생 조회(2)\n학생 수정(3)\n학생 삭제(4)\n#");
 		
 		String str = scan.nextLine();
 		
@@ -117,9 +119,11 @@ public class UserList {
 			if(rs.getInt(1) >= 1)
 			{
 				System.out.println("이미 등록된 학번입니다.");
+				return ;
 			}
-		} catch (Exception e) {
-			// TODO: handle exception
+		} catch (SQLException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
 		}
 		
 		System.out.print("이름 : ");
@@ -132,61 +136,58 @@ public class UserList {
 		this.phone = scan.nextLine();
 		
 		// 학과 체크하기
-		int num = 0;
 		try {
-			sql = "SELECT count(*) FROM insa.user_dept";
+			sql = "SELECT DEPT_NAME AS DEPTNAME FROM insa.user_dept";
 			
 			conn = DriverManager.getConnection(DBConn.url, DBConn.user, DBConn.password);
 			
 			stmt = conn.createStatement();
 			rs = stmt.executeQuery(sql);
-				
-			rs.next();
-			num = rs.getInt(1);
 			
-			sql = "SELECT dept_name FROM insa.user_dept";
+			ArrayList<DeptBean> list = new ArrayList<DeptBean>();
 			
-			stmt = conn.createStatement();
-			rs = stmt.executeQuery(sql);
-			
-			System.out.println("등록된 학과 리스트");
-			System.out.println("--------------");
-			rs.next();
-			for(int i=0;i<num+4;i++) 
-			{
-				System.out.println(rs.getString(i+1));
+			while(rs.next()) {
+				DeptBean bean = new DeptBean(); 
+				bean.setDept_name(rs.getString("DEPTNAME"));
+				list.add(bean);
 			}
-		} catch (Exception e) {
-			// TODO: handle exception
+			
+			if(list.size() > 0) {
+				System.out.println("학과");
+				System.out.println("-----");
+				
+				//결과물 출력
+				for(int i=0; i<list.size(); i++) 
+				{
+					System.out.println(list.get(i).getDept_name());
+				}
+			}
+		} catch (SQLException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
 		}
 				
 		System.out.print("학과명 : ");
 		this.dept_name = scan.nextLine();
 		// 학과 체크하기
 		try {
-			sql = "SELECT COUNT(*) FROM insa.user_dept WHERE dept_name ='"+ this.dept_name +"'";
-			
-			// conn = DriverManager.getConnection(DBConn.url, DBConn.user, DBConn.password);
+			sql = "SELECT no, dept_name FROM insa.user_dept WHERE dept_name ='"+ this.dept_name +"'";
 			
 			stmt = conn.createStatement();
 			rs = stmt.executeQuery(sql);
 			
 			rs.next();
-			if(rs.getInt(1) <= 0)
+			if(this.dept_name.equals(rs.getString("dept_name")))
 			{
-				System.out.println("존재하지 않는 학과명입니다.");
+				this.dept_no = rs.getInt("no");
 			}else
 			{
-				sql = "SELECT dept_no FROM insa.user_dept WHERE dept_name ='"+ this.dept_name +"'";
+				System.out.println("존재하지 않는 학과명입니다.");
 				
-				stmt = conn.createStatement();
-				rs = stmt.executeQuery(sql);
-				
-				rs.next();
-				num = rs.getInt(1);
 			}
-		} catch (Exception e) {
-			// TODO: handle exception
+		} catch (SQLException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
 		}
 		
 		// 입력한 학생 정보 데이터 insert
@@ -196,7 +197,8 @@ public class UserList {
 			// conn = DriverManager.getConnection(DBConn.url, DBConn.user, DBConn.password);
 			
 			pstmt = conn.prepareStatement(sql);
-			pstmt.setInt(1, num);
+			
+			pstmt.setInt(1, this.dept_no);
 			pstmt.setString(2, this.user_id);
 			pstmt.setString(3, this.name);
 			pstmt.setString(4, this.email);
@@ -285,8 +287,9 @@ public class UserList {
 				System.out.println("학생 정보가 없습니다.");
 			
 			
-		} catch (Exception e) {
-			// TODO: handle exception
+		} catch (SQLException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
 		}
 	}
 	
@@ -297,6 +300,39 @@ public class UserList {
 	
 	// delete
 	public void userDelete() {
+		System.out.println("학생 정보를 삭제합니다.");
 		
+		System.out.print("학번 : ");
+		this.user_id = scan.nextLine();
+		
+		try {
+			sql = "SELECT COUNT(*) FROM insa.user_info WHERE id ='"+ this.user_id +"'";
+			
+			conn = DriverManager.getConnection(DBConn.url, DBConn.user, DBConn.password);
+			
+			stmt = conn.createStatement();
+			rs = stmt.executeQuery(sql);
+			
+			rs.next();
+
+			if(rs.getInt(1) <= 0) {
+				System.out.println("학생 정보가 없습니다.");
+			}
+				
+			System.out.print(rs.getInt(1) + "건이 검색되었습니다.\n정말 삭제하시겠습니까?(y/n)\n#");
+			if(scan.nextLine().equals("y") || scan.nextLine().equals("Y")) {
+				sql = "DELETE FROM insa.user_info WHERE id ='"+ this.user_id +"'";
+				
+				pstmt = conn.prepareStatement(sql);
+				pstmt.executeUpdate();
+				
+				System.out.println("학생 정보가 삭제되었습니다.");
+				
+			}
+			
+		} catch (SQLException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
 	}
 }

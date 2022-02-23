@@ -137,10 +137,10 @@ public class Main {
 			else if(str.equals("7"))
 			{
 				scan.close();
-				System.out.println("SYSTEM : 종료됩니다.");
+				System.out.println("프로그램이 종료됩니다.");
 				loopChk = false;
 			}else
-				System.out.println("SYSTEM : 잘못된 입력입니다. 다시 입력해주세요.");
+				System.out.println("잘못된 입력입니다. 다시 입력해주세요.");
 		}
 		
 		scan.close();
